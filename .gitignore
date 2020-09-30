@@ -1,0 +1,4 @@
+# files to ignore for git
+.env
+*.idea
+__pycache__
