@@ -3,3 +3,5 @@ Modules used in this project:
 - mysql-connector-python
 - requests
 - bs4
+- flask
+- flask_restful
