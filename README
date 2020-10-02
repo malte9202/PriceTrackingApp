@@ -1,3 +1,5 @@
 Modules used in this project:
 - python-dotenv
 - mysql-connector-python
+- requests
+- bs4
