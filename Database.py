@@ -34,7 +34,7 @@ class Database(object):
                 self.db_cursor.execute(migrations[migration])
                 self.db_connection.commit()
                 self.db_cursor.execute('UPDATE migrations '
-                                       'SET executed = 1'
+                                       'SET executed = 1 '
                                        'WHERE name = (%s);', (migration,))
                 self.db_connection.commit()
             else:  # skip migrations that were already executed
