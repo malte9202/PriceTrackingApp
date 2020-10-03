@@ -1,7 +1,5 @@
-Modules used in this project:
-- python-dotenv
-- mysql-connector-python
-- requests
-- bs4
-- flask
-- flask_restful
+PriceTrackingApp
+- you can add products to your list
+- requires geizhals product url
+- price are scraped
+- configure notifications when the price drops below a defined limit
