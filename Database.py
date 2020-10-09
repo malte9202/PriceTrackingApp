@@ -86,5 +86,18 @@ class Database(object):
         self.db_cursor.execute(delete_statement, (product_id,))
         self.db_connection.commit()
 
+    # function to drop table, required for unittest
+    def drop_table(self, table_name: str) -> None:
+        delete_statement = f'DROP TABLE {table_name};'
+        self.db_cursor.execute(delete_statement)
+        self.db_connection.commit()
+
+    # function to delete migration, required for unittest
+    def delete_migration(self, migration_id: int) -> None:
+        test_database = Database()  # init db
+        delete_statement = 'DELETE FROM migrations WHERE id = %s;'
+        self.db_cursor.execute(delete_statement, (migration_id,))
+        self.db_connection.commit()
+
     def __del__(self) -> None:
         self.db_connection.close()
