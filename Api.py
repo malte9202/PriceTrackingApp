@@ -71,7 +71,6 @@ class Price(Resource):
 api.add_resource(ProductList, '/productlist')  # add productlist endpoint
 api.add_resource(CreateProduct, '/product/create')  # add create endpoint
 api.add_resource(Product, '/product/<product_id>')  # add product endpoint
-api.add_resource(PriceList, '/prices')  # add price list endpoint
 api.add_resource(Price, '/price/<product_id>')  # add price endpoint
 
 # main loop to run api
