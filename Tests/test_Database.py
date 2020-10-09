@@ -21,8 +21,10 @@ class TestDatabase(TestCase):
         Database.execute_migration(test_database, test_migrations)
         # check if test tables were created
         test_query = 'SHOW TABLES;'
-        self.assertIn(('test_1',), Database.execute_query(test_database, test_query))
-        self.assertIn(('test_2',), Database.execute_query(test_database, test_query))
+        self.assertIn(('test_1',), Database.execute_query(test_database, test_query),
+                      msg='test_1 should be in the table list.')
+        self.assertIn(('test_2',), Database.execute_query(test_database, test_query),
+                      msg='test_2 should be in the table list.')
         # remove test data
         Database.drop_table(test_database, 'test_1')
         Database.drop_table(test_database, 'test_2')
@@ -40,7 +42,8 @@ class TestDatabase(TestCase):
         Database.insert_product(test_database, 'test product', 99.99, 'https://testproducturl.com')
         test_query = 'SELECT url FROM products WHERE name = \'test product\';'
         # check if url is equal
-        self.assertEqual([('https://testproducturl.com',)], Database.execute_query(test_database, test_query))
+        self.assertEqual([('https://testproducturl.com',)], Database.execute_query(test_database, test_query),
+                         msg='url of test product should be https://testproducturl.com.')
         # get id from database
         test_id = Database.execute_query(test_database, 'SELECT id FROM products WHERE name = \'test product\';')[0][0]
         # delete test product from database
@@ -57,7 +60,8 @@ class TestDatabase(TestCase):
         Database.insert_price(test_database, test_id, 9999.99)
         test_query = f'SELECT price FROM prices WHERE product_id = {test_id};'
         # check if price fetched from db is equal to inserted price
-        self.assertEqual([(9999.99,)], Database.execute_query(test_database, test_query))
+        self.assertEqual([(9999.99,)], Database.execute_query(test_database, test_query),
+                         msg='inserted price should be 9999.99')
         # delete test data
         Database.delete_price(test_database, test_id)
         Database.delete_product(test_database, test_id)
@@ -71,25 +75,26 @@ class TestDatabase(TestCase):
                                          'SELECT id FROM products WHERE name = \'test get url\';')[0][0]
         test_query = f'SELECT url FROM products WHERE id = {test_id};'
         # check if values are equal
-        self.assertEqual([('https://testgeturl.com',)], Database.execute_query(test_database, test_query))
+        self.assertEqual([('https://testgeturl.com',)], Database.execute_query(test_database, test_query),
+                         msg='url should be https://testgeturl.com')
         Database.delete_product(test_database, test_id)  # delete test product
 
     def test_get_product_ids(self) -> None:
         test_database = Database()  # init db
         product_ids = Database.get_product_ids(test_database)  # fetch product_ids
         for product_id in product_ids:  # iterate through ids
-            self.assertEqual(type(product_id), int)  # check if ids are integers
+            self.assertEqual(type(product_id), int, msg='product_id should be integer')  # check if ids are integers
 
     def test_execute_query(self) -> None:
         test_database = Database()  # init db
         # get count result
         count_result = Database.execute_query(test_database, 'SELECT COUNT(id) FROM products;')[0][0]
         # check if count result returns integer
-        self.assertEqual(type(count_result), int)
+        self.assertEqual(type(count_result), int, msg='count result should be integer')
         # get list result
         list_result = Database.execute_query(test_database, 'SELECT * FROM prices;')
         # check if list result is list
-        self.assertEqual(type(list_result), list)
+        self.assertEqual(type(list_result), list, msg='list result should be a list')
 
     def test_delete_product(self) -> None:
         test_database = Database()  # init db
@@ -103,7 +108,7 @@ class TestDatabase(TestCase):
         test_result = Database.execute_query(test_database,
                                              'SELECT COUNT(1) FROM products WHERE name = \'test delete\';')[0][0]
         # check if product was deleted
-        self.assertEqual(test_result, 0)
+        self.assertEqual(test_result, 0, msg='count should be 0')
 
     def test_delete_price(self) -> None:
         test_database = Database()  # init db
@@ -119,7 +124,7 @@ class TestDatabase(TestCase):
         test_result = Database.execute_query(test_database,
                                              f'SELECT COUNT(1) FROM prices WHERE product_id = {test_id};')[0][0]
         # check if the price was deleted
-        self.assertEqual(test_result, 0)
+        self.assertEqual(test_result, 0, msg='count should be 0')
         # delete test product
         Database.delete_product(test_database, test_id)
 
@@ -127,13 +132,16 @@ class TestDatabase(TestCase):
         test_database = Database()  # init db
         test_query = 'SHOW TABLES;'
         # check if tables from execute migration test where deleted
-        self.assertNotIn(('test_1',), Database.execute_query(test_database, test_query))
-        self.assertNotIn(('test_2',), Database.execute_query(test_database, test_query))
+        self.assertNotIn(('test_1',), Database.execute_query(test_database, test_query),
+                         msg='test_1 should not be in table list')
+        self.assertNotIn(('test_2',), Database.execute_query(test_database, test_query),
+                         msg='test_2 should not be in table list')
 
     def test_delete_migration(self) -> None:
         test_database = Database()
         test_query = 'SELECT name FROM migrations WHERE name IN (\'test_migration_0001\', \'test_migration_0002\');'
-        self.assertNotIn('test_migration_0001', Database.execute_query(test_database, test_query))
-        self.assertNotIn('test_migration_0002', Database.execute_query(test_database, test_query))
-
+        self.assertNotIn('test_migration_0001', Database.execute_query(test_database, test_query),
+                         msg='test_migration_0001 should not be in migrations table')
+        self.assertNotIn('test_migration_0002', Database.execute_query(test_database, test_query),
+                         msg='test_migration_0002 should not be in migrations table')
 
